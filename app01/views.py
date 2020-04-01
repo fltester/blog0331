@@ -17,7 +17,16 @@ class Login(View):
         #和数据库的数据对比
         #models.UserInfo.objects.filter(username=user,password=pwd).exists()
         user_obj = models.UserInfo.objects.filter(username=user,password=pwd).first()
-        if user_obj:
+        if user_obj:#用户登录成功
+            #return redirect("/index")
+            # result = redirect("/index/")
+            # result.set_cookie("xxxxxx",user)#基于cookie认证：存放在浏览器上的键值对
+            # return result
+
+            #session控制登录
+            request.session["user_name"] = user_obj.username
+            request.session["user_id"] = user_obj.pk
+            print(user_obj.pk)
             return redirect("/index/")
         else:
             return render(request,"login.html",{"error":"用户名或密码错误"})
@@ -27,4 +36,11 @@ class Login(View):
 
 class Index(View):
     def get(self,request):
-        return  render(request,"index.html")
+        #user = request.COOKIES.get("xxxxxx")
+
+        user = request.session.get("user_name")
+        id = request.session.get("user_id")
+        if not user:
+            return redirect("/login/")
+        else:
+            return  render(request,"index.html",{"user":user})
