@@ -25,7 +25,7 @@ class Login(View):
 
             #session控制登录
             #session是一种数据存储方式，将数据存放在服务端，django默认存在数据库，在settings文件中可以设置存放的位置
-            request.session["user_name"] = user_obj.username
+            request.session["user_name"] = user_obj.username #添加、设置session
             request.session["user_id"] = user_obj.pk
             print(user_obj.pk)
             return redirect("/index/")
@@ -37,7 +37,8 @@ class Login(View):
 #通过类装饰器进行session验证登录
 def auth(func):
     def inner(self,request,*args,**kwargs):
-        user = request.session.get("user_name")
+        print(dict(request.session))
+        user = request.session.get("user_name")  # 读取session  #del request.session["user_name"]删除
         id = request.session.get("user_id")
         if not user:
             return redirect("/login/")
